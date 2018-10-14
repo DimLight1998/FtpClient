@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CommandSenderTests.cs" />
+    <Compile Include="ConnectionTests.cs" />
     <Compile Include="OperationPerformerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

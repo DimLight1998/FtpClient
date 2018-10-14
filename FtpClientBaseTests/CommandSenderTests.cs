@@ -1,17 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FtpClientBase;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#region
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+#endregion
 
 namespace FtpClientBase.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class CommandSenderTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void IsFullResponseTest()
         {
             Assert.IsTrue(CommandSender.IsFullResponse("123 hello world!\r\n"));

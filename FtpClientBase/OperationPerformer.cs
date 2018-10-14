@@ -1,6 +1,7 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,17 +10,20 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+#endregion
+
 namespace FtpClientBase
 {
     public class OperationPerformer
     {
         private readonly CommandSender _commandSender;
-        public bool ActiveMode { set; get; } = false;
 
         public OperationPerformer(Socket socket)
         {
             _commandSender = new CommandSender(socket);
         }
+
+        public bool ActiveMode { set; get; } = false;
 
         public void OmitWelcomeResponse()
         {
@@ -71,7 +75,6 @@ namespace FtpClientBase
                     using (var file = File.OpenWrite(localFilepath))
                     {
                         while (socket.Connected)
-                        {
                             lock (socket)
                             {
                                 if (!socket.Connected) break;
@@ -79,7 +82,6 @@ namespace FtpClientBase
                                 var size = socket.Receive(buffer);
                                 file.Write(buffer, 0, size);
                             }
-                        }
                     }
                 });
 
@@ -102,9 +104,6 @@ namespace FtpClientBase
             {
                 var tcpSocket = PreparePassiveMode();
 
-                var (code, response) = _commandSender.Retr(remoteFilepath);
-                if (code != 150) throw new Exception(response);
-
                 // receive file on `tcpSocket`
                 var buffer = new byte[1024];
                 var downloadingTask = Task.Run(() =>
@@ -112,7 +111,6 @@ namespace FtpClientBase
                     using (var file = File.OpenWrite(localFilepath))
                     {
                         while (tcpSocket.Connected)
-                        {
                             lock (tcpSocket)
                             {
                                 if (!tcpSocket.Connected) break;
@@ -120,9 +118,11 @@ namespace FtpClientBase
                                 var size = tcpSocket.Receive(buffer);
                                 file.Write(buffer, 0, size);
                             }
-                        }
                     }
                 });
+
+                var (code, response) = _commandSender.Retr(remoteFilepath);
+                if (code != 150) throw new Exception(response);
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
@@ -165,9 +165,6 @@ namespace FtpClientBase
             {
                 var tcpSocket = PreparePassiveMode();
 
-                var (code, response) = _commandSender.Stor(remoteFilepath);
-                if (code != 150) throw new Exception(response);
-
                 // send file using `tcpSocket`
                 var uploadingTask = Task.Run(() =>
                 {
@@ -176,6 +173,9 @@ namespace FtpClientBase
                     tcpSocket.Shutdown(SocketShutdown.Both);
                     tcpSocket.Close();
                 });
+
+                var (code, response) = _commandSender.Stor(remoteFilepath);
+                if (code != 150) throw new Exception(response);
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
@@ -222,7 +222,6 @@ namespace FtpClientBase
                 {
                     socket = tcpSocket.Accept();
                     while (socket.Connected)
-                    {
                         lock (socket)
                         {
                             if (!socket.Connected) break;
@@ -230,7 +229,6 @@ namespace FtpClientBase
                             var size = socket.Receive(buffer);
                             fileList += Encoding.ASCII.GetString(buffer, 0, size);
                         }
-                    }
                 });
 
                 var (code, response) = _commandSender.List(filepath);
@@ -253,16 +251,12 @@ namespace FtpClientBase
             {
                 var tcpSocket = PreparePassiveMode();
 
-                var (code, response) = _commandSender.List(filepath);
-                if (code != 150) throw new Exception(response);
-
                 // receive list on `tcpSocket`
                 var buffer = new byte[1024];
 
                 var retrivalTask = Task.Run(() =>
                 {
                     while (tcpSocket.Connected)
-                    {
                         lock (tcpSocket)
                         {
                             if (!tcpSocket.Connected) break;
@@ -270,8 +264,10 @@ namespace FtpClientBase
                             var size = tcpSocket.Receive(buffer);
                             fileList += Encoding.ASCII.GetString(buffer, 0, size);
                         }
-                    }
                 });
+
+                var (code, response) = _commandSender.List(filepath);
+                if (code != 150) throw new Exception(response);
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
@@ -308,7 +304,7 @@ namespace FtpClientBase
             var (code, response) = _commandSender.Pasv();
             if (code != 227) throw new Exception(response);
             var epStringSlices = Regex.Match(response, @"\((.*?)\)").Groups[1].Value.Split(',');
-            var endPoint = new IPEndPoint(new IPAddress(new byte[]
+            var endPoint = new IPEndPoint(new IPAddress(new[]
                 {
                     byte.Parse(epStringSlices[0]),
                     byte.Parse(epStringSlices[1]),
@@ -323,7 +319,10 @@ namespace FtpClientBase
             return tcpSocket;
         }
 
-        /// <summary>This method will send an active command to the server, and create a tcp socket listening for incoming connection.</summary>
+        /// <summary>
+        ///     This method will send an active command to the server, and create a tcp socket listening for incoming
+        ///     connection.
+        /// </summary>
         /// <returns>A tcp socket listening for incoming connection.</returns>
         private Socket PrepareActiveMode()
         {

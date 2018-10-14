@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -6,11 +8,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#endregion
+
 namespace FtpClientBase
 {
     public class CommandSender
     {
         private readonly Socket _socket;
+
+        public CommandSender(Socket socket)
+        {
+            _socket = socket;
+        }
 
         private (int Code, string Response) SendAndGetResponse(string content)
         {
@@ -57,11 +66,6 @@ namespace FtpClientBase
         private static int ExtractCode(string response)
         {
             return int.Parse(response.Substring(0, 3));
-        }
-
-        public CommandSender(Socket socket)
-        {
-            _socket = socket;
         }
 
         public (int Code, string Response) User(string username)

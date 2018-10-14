@@ -1,80 +1,78 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FtpClientBase;
+﻿#region
+
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+#endregion
 
 namespace FtpClientBase.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class OperationPerformerTests
     {
-        private const string _host = "144.208.69.31";
-        private const int _port = 21;
-        private const string _username = "dlpuser@dlptest.com";
-        private const string _password = "e73jzTRTNqCN9PYAAjjn";
+        private const string Host = "144.208.69.31";
+        private const int Port = 21;
+        private const string Username = "dlpuser@dlptest.com";
+        private const string Password = "e73jzTRTNqCN9PYAAjjn";
 
-        [TestMethod()]
+        [TestMethod]
         public void LogInTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LogOutTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             operationPerformer.LogOut();
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void QuerySystemTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             Console.WriteLine(operationPerformer.QuerySystem());
             operationPerformer.LogOut();
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SetToBinaryTypeTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             operationPerformer.SetToBinaryType();
             operationPerformer.LogOut();
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void ListFilesTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             operationPerformer.ActiveMode = false;
             operationPerformer.ListFiles("/").ForEach(x => Console.WriteLine(x));
             operationPerformer.ActiveMode = true;
@@ -83,14 +81,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DownloadFileTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             operationPerformer.ActiveMode = false;
             operationPerformer.DownloadFile("FTP.txt", "G:\\hp\\Desktop\\test1.txt");
             operationPerformer.ActiveMode = true;
@@ -99,14 +97,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void UploadFileTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
 
             operationPerformer.ActiveMode = false;
             operationPerformer.UploadFile("haha.txt", "G:\\hp\\Desktop\\test1.txt");
@@ -122,14 +120,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void ChangeDirectoryTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             operationPerformer.ChangeDirectory("..");
             operationPerformer.ChangeDirectory(".");
             operationPerformer.ChangeDirectory(".settings");
@@ -139,14 +137,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void GetCurrentDirectoryTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
             Assert.IsTrue(operationPerformer.GetCurrentDirectory() == "/");
             operationPerformer.ChangeDirectory(".settings");
             Assert.IsTrue(operationPerformer.GetCurrentDirectory() == "/.settings");
@@ -157,14 +155,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void MakeDirectoryTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
 
             try
             {
@@ -217,14 +215,14 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void RemoveDirectoryTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(_host, _port);
+            socket.Connect(Host, Port);
             var operationPerformer = new OperationPerformer(socket);
             operationPerformer.OmitWelcomeResponse();
-            operationPerformer.LogIn(_username, _password);
+            operationPerformer.LogIn(Username, Password);
 
             try
             {

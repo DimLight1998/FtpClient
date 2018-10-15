@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpClientCli", "FtpClientCl
 		{C6ECAF7C-3E8F-4EEB-82E2-90E296AD7424} = {C6ECAF7C-3E8F-4EEB-82E2-90E296AD7424}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpClientGui", "FtpClientGui\FtpClientGui.csproj", "{87282180-F539-4411-AC51-CA59D23CB93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{B20F1304-0728-4D48-9057-9BEC6B72EF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B20F1304-0728-4D48-9057-9BEC6B72EF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B20F1304-0728-4D48-9057-9BEC6B72EF2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87282180-F539-4411-AC51-CA59D23CB93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87282180-F539-4411-AC51-CA59D23CB93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87282180-F539-4411-AC51-CA59D23CB93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87282180-F539-4411-AC51-CA59D23CB93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

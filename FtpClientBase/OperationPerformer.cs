@@ -74,15 +74,16 @@ namespace FtpClientBase
                     socket = tcpSocket.Accept();
                     using (var file = File.OpenWrite(localFilepath))
                     {
-                        while (socket.Connected)
-                            lock (socket)
-                            {
-                                if (!socket.Connected) break;
-                                if (socket.Available == 0) continue;
-                                var size = socket.Receive(buffer);
-                                file.Write(buffer, 0, size);
-                            }
+                        while (NetworkUtils.IsSocketConnected(socket))
+                        {
+                            var size = socket.Receive(buffer);
+                            file.Write(buffer, 0, size);
+                        }
                     }
+
+                    socket.Disconnect(false);
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Close();
                 });
 
                 var (code, response) = _commandSender.Retr(remoteFilepath);
@@ -90,13 +91,6 @@ namespace FtpClientBase
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
-
-                lock (socket)
-                {
-                    socket.Disconnect(false);
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Close();
-                }
 
                 downloadingTask.Wait();
             }
@@ -110,15 +104,16 @@ namespace FtpClientBase
                 {
                     using (var file = File.OpenWrite(localFilepath))
                     {
-                        while (tcpSocket.Connected)
-                            lock (tcpSocket)
-                            {
-                                if (!tcpSocket.Connected) break;
-                                if (tcpSocket.Available == 0) continue;
-                                var size = tcpSocket.Receive(buffer);
-                                file.Write(buffer, 0, size);
-                            }
+                        while (NetworkUtils.IsSocketConnected(tcpSocket))
+                        {
+                            var size = tcpSocket.Receive(buffer);
+                            file.Write(buffer, 0, size);
+                        }
                     }
+
+                    tcpSocket.Disconnect(false);
+                    tcpSocket.Shutdown(SocketShutdown.Both);
+                    tcpSocket.Close();
                 });
 
                 var (code, response) = _commandSender.Retr(remoteFilepath);
@@ -126,13 +121,6 @@ namespace FtpClientBase
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
-
-                lock (tcpSocket)
-                {
-                    tcpSocket.Disconnect(false);
-                    tcpSocket.Shutdown(SocketShutdown.Both);
-                    tcpSocket.Close();
-                }
 
                 downloadingTask.Wait();
             }
@@ -221,14 +209,15 @@ namespace FtpClientBase
                 var retrivalTask = Task.Run(() =>
                 {
                     socket = tcpSocket.Accept();
-                    while (socket.Connected)
-                        lock (socket)
-                        {
-                            if (!socket.Connected) break;
-                            if (socket.Available == 0) continue;
-                            var size = socket.Receive(buffer);
-                            fileList += Encoding.ASCII.GetString(buffer, 0, size);
-                        }
+                    while (NetworkUtils.IsSocketConnected(socket))
+                    {
+                        var size = socket.Receive(buffer);
+                        fileList += Encoding.ASCII.GetString(buffer, 0, size);
+                    }
+
+                    socket.Disconnect(false);
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Close();
                 });
 
                 var (code, response) = _commandSender.List(filepath);
@@ -236,13 +225,6 @@ namespace FtpClientBase
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
-
-                lock (socket)
-                {
-                    socket.Disconnect(false);
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Close();
-                }
 
                 tcpSocket.Close();
                 retrivalTask.Wait();
@@ -256,14 +238,15 @@ namespace FtpClientBase
 
                 var retrivalTask = Task.Run(() =>
                 {
-                    while (tcpSocket.Connected)
-                        lock (tcpSocket)
-                        {
-                            if (!tcpSocket.Connected) break;
-                            if (tcpSocket.Available == 0) continue;
-                            var size = tcpSocket.Receive(buffer);
-                            fileList += Encoding.ASCII.GetString(buffer, 0, size);
-                        }
+                    while (NetworkUtils.IsSocketConnected(tcpSocket))
+                    {
+                        var size = tcpSocket.Receive(buffer);
+                        fileList += Encoding.ASCII.GetString(buffer, 0, size);
+                    }
+
+                    tcpSocket.Disconnect(false);
+                    tcpSocket.Shutdown(SocketShutdown.Both);
+                    tcpSocket.Close();
                 });
 
                 var (code, response) = _commandSender.List(filepath);
@@ -271,17 +254,11 @@ namespace FtpClientBase
 
                 (code, response) = _commandSender.GetNextResponse();
                 if (code != 226) throw new Exception(response);
-                lock (tcpSocket)
-                {
-                    tcpSocket.Disconnect(false);
-                    tcpSocket.Shutdown(SocketShutdown.Both);
-                    tcpSocket.Close();
-                }
 
                 retrivalTask.Wait();
             }
 
-            var slices = fileList.Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var slices = fileList.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var ret = new List<(bool IsDir, long Size, string LastModificationTime, string Name)>();
             foreach (var slice in slices)
             {
@@ -331,7 +308,7 @@ namespace FtpClientBase
             tcpSocket.Listen(4);
 
             var localIp = NetworkUtils.GetLocalIpAddress();
-            var localPort = ((IPEndPoint) tcpSocket.LocalEndPoint).Port;
+            var localPort = ((IPEndPoint)tcpSocket.LocalEndPoint).Port;
             var (code, response) = _commandSender.Port(new IPEndPoint(localIp, localPort));
             if (code != 200) throw new Exception(response);
 

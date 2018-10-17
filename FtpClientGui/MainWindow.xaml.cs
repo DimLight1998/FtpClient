@@ -2,11 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using FtpClientBase;
 
 #endregion
@@ -179,7 +182,9 @@ namespace FtpClientGui
                 _localCurrentPath = LocalTextPathTextBox.Text;
             else
                 LocalTextPathTextBox.Text = _localCurrentPath;
-            _localCurrentPath = Path.GetFullPath(_localCurrentPath);
+
+            if (_localCurrentPath != LocalRootPath)
+                _localCurrentPath = Path.GetFullPath(_localCurrentPath);
             RefreshLocalView();
         }
 

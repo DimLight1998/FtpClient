@@ -5,16 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FtpClientGui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" MinHeight="600" MinWidth="800">
-    <Grid>
+        Title="MainWindow" Height="600" Width="800" MinHeight="600" MinWidth="800" d:DataContext="{d:DesignData }">
+
+    <Window.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="2, 2, 2, 2" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="2,2,2,2">
         <Grid.RowDefinitions>
+            <RowDefinition Height="90" />
             <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="180" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="75" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
@@ -22,7 +30,7 @@
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -32,19 +40,23 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Disks" Name="LocalViewDisks" Click="LocalViewDisks_OnClick" />
-                <Button Grid.Column="1" Content="Go up" Name="LocalGoUp" Click="LocalGoUp_OnClick" />
-                <Button Grid.Column="2" Content="Refresh" Name="LocalRefresh" Click="LocalRefresh_OnClick" />
+                <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Disks" Name="LocalViewDisks"
+                        Click="LocalViewDisks_OnClick" VerticalAlignment="Bottom" />
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go up" Name="LocalGoUp"
+                        Click="LocalGoUp_OnClick" VerticalAlignment="Bottom" />
+                <Button Grid.Column="2" Style="{StaticResource ButtonStyle}" Content="Refresh" Name="LocalRefresh"
+                        Click="LocalRefresh_OnClick" VerticalAlignment="Bottom" />
             </Grid>
 
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" />
-                <Button Grid.Column="1" Content="Go" Name="LocalGo" Click="LocalGo_OnClick" />
+                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" Height="25" Margin="2,2,2,2" />
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="LocalGo"
+                        Click="LocalGo_OnClick" />
             </Grid>
         </Grid>
 
@@ -63,10 +75,13 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="Connect" Name="RemoteConnectDisconnect"
+                <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="Connect"
+                        Name="RemoteConnectDisconnect"
                         Click="RemoteConnectDisconnect_OnClick" />
-                <Button Grid.Column="1" Content="Go up" Name="RemoteGoUp" Click="RemoteGoUp_OnClick" />
-                <Button Grid.Column="2" Content="Refresh" Name="RemoteRefresh" Click="RemoteRefresh_OnClick" />
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go up" Name="RemoteGoUp"
+                        Click="RemoteGoUp_OnClick" />
+                <Button Grid.Column="2" Style="{StaticResource ButtonStyle}" Content="Refresh" Name="RemoteRefresh"
+                        Click="RemoteRefresh_OnClick" />
             </Grid>
 
             <Grid Grid.Row="1">
@@ -76,64 +91,68 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="New folder" Name="RemoteNewFolder" Click="RemoteNewFolder_OnClick" />
-                <Button Grid.Column="1" Content="Remove folder" Name="RemoteRemoveFolder"
+                <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Content="New folder"
+                        Name="RemoteNewFolder" Click="RemoteNewFolder_OnClick" />
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Remove folder"
+                        Name="RemoteRemoveFolder"
                         Click="RemoteRemoveFolder_OnClick" />
-                <Button Grid.Column="2" Content="Rename file" Name="RemoteRenameFile" Click="RemoteRenameFile_OnClick" />
+                <Button Grid.Column="2" Style="{StaticResource ButtonStyle}" Content="Rename file"
+                        Name="RemoteRenameFile" Click="RemoteRenameFile_OnClick" />
             </Grid>
 
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition />
+                    <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="RemotePathTextBox" />
-                <Button Grid.Column="1" Content="Go" Name="RemoteGo" Click="RemoteGo_OnClick" />
+                <TextBox Grid.Column="0" Name="RemotePathTextBox" Height="25" Margin="2,2,2,2" />
+                <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="RemoteGo"
+                        Click="RemoteGo_OnClick" />
             </Grid>
         </Grid>
 
         <!--local file list-->
-        <ListView Grid.Row="1" Grid.Column="0" Name="LocalFileList" />
+        <ListView Grid.Row="1" Grid.Column="0" Name="LocalFileList" Margin="2,2,2,2" HorizontalContentAlignment="Stretch"/>
 
         <!--transport commands-->
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="4*" />
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Content="----&gt;" Name="ConfirmUpload" Click="ConfirmUpload_OnClick"/>
-                <Button Grid.Row="1" Content="&lt;----" Name="ConfirmDownload" Click="ConfirmDownload_OnClick"/>
-                <RadioButton Grid.Row="2" GroupName="TransportMode" Content="Active mode" IsChecked="False"
-                             Name="ToggleActiveButton" Checked="ToggleActiveButton_OnChecked"/>
-                <RadioButton Grid.Row="3" GroupName="TransportMode" Content="Passive mode" IsChecked="True"
-                             Name="TogglePassiveButton" Checked="TogglePassiveButton_OnChecked"/>
+                <Button Grid.Row="0" Style="{StaticResource ButtonStyle}" Content="----&gt;" Name="ConfirmUpload"
+                        Click="ConfirmUpload_OnClick" Width="50" Height="50" />
+                <Button Grid.Row="1" Style="{StaticResource ButtonStyle}" Content="&lt;----" Name="ConfirmDownload"
+                        Click="ConfirmDownload_OnClick" Width="50" Height="50" />
+                <RadioButton Grid.Row="2" GroupName="TransportMode" Content="Active" IsChecked="False"
+                             Name="ToggleActiveButton" Checked="ToggleActiveButton_OnChecked"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Width="65" />
+                <RadioButton Grid.Row="3" GroupName="TransportMode" Content="Passive" IsChecked="True"
+                             Name="TogglePassiveButton" Checked="TogglePassiveButton_OnChecked"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" Width="65" />
             </Grid>
         </Grid>
 
         <!--remote file list-->
-        <ListView Grid.Row="1" Grid.Column="2" Name="RemoteFileList" />
+        <ListView Grid.Row="1" Grid.Column="2" Name="RemoteFileList" Margin="2,2,2,2" HorizontalContentAlignment="Stretch"/>
 
         <!--tasks and log-->
-        <TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+        <TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,2,2,2">
             <TabItem Header="Tasks">
-                <ListView>
-                    <ListViewItem>test</ListViewItem>
-                    <ListViewItem>test</ListViewItem>
-                    <ListViewItem>test</ListViewItem>
+                <ListView Name="TasksListView" HorizontalContentAlignment="Stretch">
+                    <TextBlock>hhh</TextBlock>
+                    <TextBlock>hhh</TextBlock>
                 </ListView>
             </TabItem>
             <TabItem Header="Log">
-                <TextBox IsReadOnly="True">
-                    this is log
-                    and more
+                <TextBox IsReadOnly="True" FontFamily="Consolas">
                 </TextBox>
             </TabItem>
         </TabControl>
-
     </Grid>
 </Window>

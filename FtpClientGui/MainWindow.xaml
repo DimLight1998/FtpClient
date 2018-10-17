@@ -5,8 +5,135 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FtpClientGui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="600" Width="800" MinHeight="600" MinWidth="800">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!--local buttons-->
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Disks" Name="LocalViewDisks" Click="LocalViewDisks_OnClick" />
+                <Button Grid.Column="1" Content="Go up" Name="LocalGoUp" Click="LocalGoUp_OnClick" />
+                <Button Grid.Column="2" Content="Refresh" Name="LocalRefresh" Click="LocalRefresh_OnClick" />
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" />
+                <Button Grid.Column="1" Content="Go" Name="LocalGo" Click="LocalGo_OnClick" />
+            </Grid>
+        </Grid>
+
+        <!--remote buttons-->
+        <Grid Grid.Row="0" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Connect" Name="RemoteConnectDisconnect"
+                        Click="RemoteConnectDisconnect_OnClick" />
+                <Button Grid.Column="1" Content="Go up" Name="RemoteGoUp" Click="RemoteGoUp_OnClick" />
+                <Button Grid.Column="2" Content="Refresh" Name="RemoteRefresh" Click="RemoteRefresh_OnClick" />
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="New folder" Name="RemoteNewFolder" Click="RemoteNewFolder_OnClick" />
+                <Button Grid.Column="1" Content="Remove folder" Name="RemoteRemoveFolder"
+                        Click="RemoteRemoveFolder_OnClick" />
+                <Button Grid.Column="2" Content="Rename file" Name="RemoteRenameFile" Click="RemoteRenameFile_OnClick" />
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Name="RemotePathTextBox" />
+                <Button Grid.Column="1" Content="Go" Name="RemoteGo" Click="RemoteGo_OnClick" />
+            </Grid>
+        </Grid>
+
+        <!--local file list-->
+        <ListView Grid.Row="1" Grid.Column="0" Name="LocalFileList" />
+
+        <!--transport commands-->
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" Content="----&gt;" Name="ConfirmUpload" Click="ConfirmUpload_OnClick"/>
+                <Button Grid.Row="1" Content="&lt;----" Name="ConfirmDownload" Click="ConfirmDownload_OnClick"/>
+                <RadioButton Grid.Row="2" GroupName="TransportMode" Content="Active mode" IsChecked="False"
+                             Name="ToggleActiveButton" Checked="ToggleActiveButton_OnChecked"/>
+                <RadioButton Grid.Row="3" GroupName="TransportMode" Content="Passive mode" IsChecked="True"
+                             Name="TogglePassiveButton" Checked="TogglePassiveButton_OnChecked"/>
+            </Grid>
+        </Grid>
+
+        <!--remote file list-->
+        <ListView Grid.Row="1" Grid.Column="2" Name="RemoteFileList" />
+
+        <!--tasks and log-->
+        <TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+            <TabItem Header="Tasks">
+                <ListView>
+                    <ListViewItem>test</ListViewItem>
+                    <ListViewItem>test</ListViewItem>
+                    <ListViewItem>test</ListViewItem>
+                </ListView>
+            </TabItem>
+            <TabItem Header="Log">
+                <TextBox IsReadOnly="True">
+                    this is log
+                    and more
+                </TextBox>
+            </TabItem>
+        </TabControl>
+
     </Grid>
 </Window>

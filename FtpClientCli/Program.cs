@@ -17,20 +17,21 @@ Welcome to the YGGUB ftp client CLI!
 
 You can use following commands:
 
-- help                  Display this message.
-- exit                  Exit this program.
+- help                      Display this message.
+- exit                      Exit this program.
 
-- open                  Open a connection to a ftp server and login.
-- close                 Close the connection to a ftp server.
+- open                      Open a connection to a ftp server and login.
+- close                     Close the connection to a ftp server.
 
-- active                Set mode to active mode.
-- passive               Set mode to passive mode.
+- active                    Set mode to active mode.
+- passive                   Set mode to passive mode.
 
-- pwd                   Print current working directory.
-- cd <pathname>         Change current working directory to `pathname`.
-- ls [pathname]         List files and folders in `pathname`.
-- mkdir <pathname>      Make a new folder named `pathname`.
-- rmdir <pathname>      Remove an empty folder named `pathname`.
+- pwd                       Print current working directory.
+- cd <pathname>             Change current working directory to `pathname`.
+- ls [pathname]             List files and folders in `pathname`.
+- mkdir <pathname>          Make a new folder named `pathname`.
+- rmdir <pathname>          Remove an empty folder named `pathname`.
+- mv <oldname> <newname>    Rename `oldname` to `newname`.
 
 - get <remote_filepath> <local_filepath>
                         Download file `remote_filepath` to `local_filepath`.
@@ -122,6 +123,7 @@ You can use following commands:
                     case "ls":
                     case "mkdir":
                     case "rmdir":
+                    case "mv":
                     case "get":
                     case "put":
                     case "active":
@@ -215,6 +217,31 @@ You can use following commands:
                                             pathname.Count(x => x == ' ' || x == '\t') == 0)
                                             globalConnection.Performer.RemoveDirectory(pathname);
                                         else goto default;
+                                        break;
+                                    }
+                                    case "mv":
+                                    {
+                                        var match = Regex.Match(command, @"\s*mv\s+(.+?)\s*$");
+                                        if (!match.Success) goto default;
+
+                                        var parameter = match.Groups[1].Value;
+                                        if (Regex.IsMatch(parameter, @"([^""].+?)\s(.+?)$"))
+                                        {
+                                            match = Regex.Match(parameter, @"([^""].+?)\s(.+?)$");
+                                            globalConnection.Performer.RenameFile(
+                                                match.Groups[1].Value,
+                                                match.Groups[2].Value
+                                            );
+                                        }
+                                        else if (Regex.IsMatch(parameter, @"("".+?"")\s(.+?)$"))
+                                        {
+                                            match = Regex.Match(parameter, @"("".+?"")\s(.+?)$");
+                                            globalConnection.Performer.RenameFile(
+                                                match.Groups[1].Value,
+                                                match.Groups[2].Value
+                                            );
+                                        }
+
                                         break;
                                     }
                                     case "get":

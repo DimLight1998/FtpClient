@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FtpClientGui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800" MinHeight="600" MinWidth="800" d:DataContext="{d:DesignData }">
+        Title="YGGUB FTP Client" Height="600" Width="800" MinHeight="600" MinWidth="800" d:DataContext="{d:DesignData }">
 
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">

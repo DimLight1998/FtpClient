@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FtpClientGui"
         mc:Ignorable="d"
-        Title="Login" Height="450" Width="800">
+        Title="Login" Height="200" Width="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -19,17 +19,17 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Hostname" />
-        <Label Grid.Row="1" Grid.Column="0" Content="Port" />
-        <Label Grid.Row="2" Grid.Column="0" Content="User name" />
-        <Label Grid.Row="3" Grid.Column="0" Content="Password" />
+        <Label Margin ="3" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Content="Hostname" />
+        <Label Margin ="3"  VerticalAlignment="Center" Grid.Row="1" Grid.Column="0" Content="Port" />
+        <Label Margin ="3"  VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" Content="User name" />
+        <Label Margin ="3"  VerticalAlignment="Center" Grid.Row="3" Grid.Column="0" Content="Password" />
 
-        <TextBox Grid.Row="0" Grid.Column="1" Name="HostnameInput" />
-        <TextBox Grid.Row="1" Grid.Column="1" Name="PortInput" />
-        <TextBox Grid.Row="2" Grid.Column="1" Name="UserNameInput" />
-        <PasswordBox Grid.Row="3" Grid.Column="1" Name="PasswordInput" />
+        <TextBox Margin ="3"  VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" Name="HostnameInput" />
+        <TextBox Margin ="3"  VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Name="PortInput" />
+        <TextBox Margin ="3"  VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Name="UserNameInput" />
+        <PasswordBox Margin ="3"  VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Name="PasswordInput" />
 
-        <Button Grid.Row="4" Grid.Column="0" Content="Cancel" Name="Cancel" Click="Cancel_OnClick" />
-        <Button Grid.Row="4" Grid.Column="1" Content="Connect" Name="Connect" Click="Connect_OnClick" />
+        <Button  Margin ="3" Grid.Row="4" Grid.Column="0" Content="Cancel" Name="Cancel" Click="Cancel_OnClick" />
+        <Button Margin ="3"  Grid.Row="4" Grid.Column="1" Content="Connect" Name="Connect" Click="Connect_OnClick" />
     </Grid>
 </Window>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FtpClientGui"
         mc:Ignorable="d"
-        Title="SingleInput" Height="450" Width="800">
+        Title="SingleInput" Height="150" Width="200">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -13,8 +13,8 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Name="HintText" />
-        <TextBox Grid.Row="1" Name="InputTextBox" />
-        <Button Grid.Row="2" Name="SubmitButton" Click="SubmitButton_OnClick">Submit</Button>
+        <Label  Margin ="3" VerticalAlignment="Center" Grid.Row="0" Name="HintText" />
+        <TextBox  Margin ="3" VerticalAlignment="Center" Grid.Row="1" Name="InputTextBox" />
+        <Button  Margin ="3" VerticalAlignment="Center" Grid.Row="2" Name="SubmitButton" Click="SubmitButton_OnClick" Width="100">Submit</Button>
     </Grid>
 </Window>

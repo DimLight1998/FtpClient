@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -10,13 +9,14 @@ namespace FtpClientBase
 {
     public class Connection
     {
+        private readonly CommandSender.OnLogGenerated _onReceive;
+
+        private readonly CommandSender.OnLogGenerated _onSend;
         private readonly IPAddress _remoteIpAddress;
         private readonly int _remotePort;
 
-        private readonly CommandSender.OnLogGenerated _onSend;
-        private readonly CommandSender.OnLogGenerated _onReceive;
-
-        public Connection(string hostname, int port = 21, CommandSender.OnLogGenerated onSend = null, CommandSender.OnLogGenerated onReceive = null)
+        public Connection(string hostname, int port = 21, CommandSender.OnLogGenerated onSend = null,
+            CommandSender.OnLogGenerated onReceive = null)
         {
             _remoteIpAddress = Dns.GetHostAddresses(hostname)[0];
             _remotePort = port;

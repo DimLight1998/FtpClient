@@ -8,13 +8,13 @@
         Title="SingleInput" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        
-        <Label Grid.Row="0" Name="HintText"></Label>
-        <TextBox Grid.Row="1" Name="InputTextBox"></TextBox>
+
+        <Label Grid.Row="0" Name="HintText" />
+        <TextBox Grid.Row="1" Name="InputTextBox" />
         <Button Grid.Row="2" Name="SubmitButton" Click="SubmitButton_OnClick">Submit</Button>
     </Grid>
 </Window>

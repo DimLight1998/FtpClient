@@ -2,16 +2,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 using FtpClientBase;
@@ -27,7 +23,8 @@ namespace FtpClientGui
     public partial class MainWindow : Window
     {
         private const string LocalRootPath = "<root>";
-        private List<(string FileName, bool IsPending)> _tasks = new List<(string FileName, bool IsPending)>();
+
+        private readonly List<(string FileName, bool IsPending)> _tasks = new List<(string FileName, bool IsPending)>();
         private Connection _connection;
 
         /// <summary>
@@ -186,13 +183,11 @@ namespace FtpClientGui
         {
             TasksListView.Items.Clear();
             foreach (var (fileName, isPending) in _tasks)
-            {
                 TasksListView.Items.Add(new TextBlock
                 {
                     Text = (isPending ? "[Pending]" : "[Done]") + " " + fileName,
                     Foreground = new SolidColorBrush(isPending ? Colors.DarkRed : Colors.DarkGreen)
                 });
-            }
         }
 
         private void LocalRefresh_OnClick(object sender, RoutedEventArgs e)
@@ -242,11 +237,8 @@ namespace FtpClientGui
         private void RemoteConnectDisconnect_OnClick(object sender, RoutedEventArgs e)
         {
             if (_connection == null || _connection.Connected == false)
-            {
                 new Login(this).ShowDialog();
-            }
             else
-            {
                 Task.Run(() =>
                 {
                     _connection.Destory();
@@ -262,7 +254,6 @@ namespace FtpClientGui
                         TasksListView.Items.Clear();
                     });
                 });
-            }
         }
 
         private void RemoteGoUp_OnClick(object sender, RoutedEventArgs e)
@@ -318,14 +309,11 @@ namespace FtpClientGui
 
             var selectedTexts = new List<string>();
             foreach (var selectedFile in RemoteFileList.SelectedItems)
-            {
                 selectedTexts.Add(((TextBlock) selectedFile).Text);
-            }
 
             Task.Run(() =>
             {
                 foreach (var text in selectedTexts)
-                {
                     try
                     {
                         _connection.Performer.RemoveDirectory(text);
@@ -334,7 +322,6 @@ namespace FtpClientGui
                     {
                         Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
                     }
-                }
 
                 Dispatcher.Invoke(RefreshRemoteView);
             });
@@ -490,7 +477,6 @@ namespace FtpClientGui
             Task.Run(() =>
             {
                 foreach (var fileName in fileNames)
-                {
                     try
                     {
                         var filePath = remotePath + '/' + fileName;
@@ -501,7 +487,6 @@ namespace FtpClientGui
                     {
                         Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
                     }
-                }
 
                 Dispatcher.Invoke(RefreshLocalView);
             });

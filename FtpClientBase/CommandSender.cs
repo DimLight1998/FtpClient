@@ -14,12 +14,12 @@ namespace FtpClientBase
 {
     public class CommandSender
     {
-        private readonly Socket _socket;
-
         public delegate void OnLogGenerated(string s);
 
-        private readonly OnLogGenerated _onSendingLogGenerated;
         private readonly OnLogGenerated _onReceivingLogGenerated;
+
+        private readonly OnLogGenerated _onSendingLogGenerated;
+        private readonly Socket _socket;
 
         public CommandSender(Socket socket, OnLogGenerated onSend = null, OnLogGenerated onReceive = null)
         {

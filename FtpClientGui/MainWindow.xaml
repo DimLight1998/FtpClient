@@ -54,7 +54,8 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" Height="25" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" Height="25" Margin="2,2,2,2"
+                         VerticalContentAlignment="Center" />
                 <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="LocalGo"
                         Click="LocalGo_OnClick" />
             </Grid>
@@ -106,7 +107,8 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="RemotePathTextBox" Height="25" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Column="0" Name="RemotePathTextBox" Height="25" Margin="2,2,2,2"
+                         VerticalContentAlignment="Center" />
                 <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="RemoteGo"
                         Click="RemoteGo_OnClick" />
             </Grid>
@@ -146,8 +148,7 @@
         <!--tasks and log-->
         <TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,2,2,2">
             <TabItem Header="Tasks">
-                <ListView Name="TasksListView" HorizontalContentAlignment="Stretch">
-                </ListView>
+                <ListView Name="TasksListView" HorizontalContentAlignment="Stretch" />
             </TabItem>
             <TabItem Header="Log">
                 <ScrollViewer Name="LogScrollViewer" ScrollChanged="ScrollViewer_OnScrollChanged">

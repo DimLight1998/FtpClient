@@ -1,9 +1,12 @@
-﻿using FtpClientBase;
+﻿#region
+
 #region
 
 using System;
 using System.Net.Sockets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+#endregion
 
 #endregion
 
@@ -256,7 +259,7 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(true);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void RenameFileTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

@@ -18,7 +18,8 @@ namespace FtpClientBase
     {
         private readonly CommandSender _commandSender;
 
-        public OperationPerformer(Socket socket, CommandSender.OnLogGenerated onSend = null, CommandSender.OnLogGenerated onReceive = null)
+        public OperationPerformer(Socket socket, CommandSender.OnLogGenerated onSend = null,
+            CommandSender.OnLogGenerated onReceive = null)
         {
             _commandSender = new CommandSender(socket, onSend, onReceive);
         }
@@ -258,7 +259,7 @@ namespace FtpClientBase
                 retrivalTask.Wait();
             }
 
-            var slices = fileList.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var slices = fileList.Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries).ToList();
             var ret = new List<(bool IsDir, long Size, string LastModificationTime, string Name)>();
             foreach (var slice in slices)
             {
@@ -316,7 +317,7 @@ namespace FtpClientBase
             tcpSocket.Listen(4);
 
             var localIp = NetworkUtils.GetLocalIpAddress();
-            var localPort = ((IPEndPoint)tcpSocket.LocalEndPoint).Port;
+            var localPort = ((IPEndPoint) tcpSocket.LocalEndPoint).Port;
             var (code, response) = _commandSender.Port(new IPEndPoint(localIp, localPort));
             if (code != 200) throw new Exception(response);
 

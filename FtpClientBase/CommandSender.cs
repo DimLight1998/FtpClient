@@ -16,14 +16,22 @@ namespace FtpClientBase
     {
         private readonly Socket _socket;
 
-        public CommandSender(Socket socket)
+        public delegate void OnLogGenerated(string s);
+
+        private readonly OnLogGenerated _onSendingLogGenerated;
+        private readonly OnLogGenerated _onReceivingLogGenerated;
+
+        public CommandSender(Socket socket, OnLogGenerated onSend = null, OnLogGenerated onReceive = null)
         {
             _socket = socket;
+
+            _onSendingLogGenerated = onSend ?? (x => Debug.Print(x));
+            _onReceivingLogGenerated = onReceive ?? (x => Debug.Print(x));
         }
 
         private (int Code, string Response) SendAndGetResponse(string content)
         {
-            Debug.Print(content);
+            _onSendingLogGenerated(content);
             _socket.Send(Encoding.ASCII.GetBytes(content));
 
             return GetNextResponse();
@@ -41,7 +49,7 @@ namespace FtpClientBase
                 if (IsFullResponse(response)) break;
             }
 
-            Debug.Print(response);
+            _onReceivingLogGenerated(response);
             return (ExtractCode(response), response);
         }
 

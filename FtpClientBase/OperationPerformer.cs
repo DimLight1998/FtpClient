@@ -18,9 +18,9 @@ namespace FtpClientBase
     {
         private readonly CommandSender _commandSender;
 
-        public OperationPerformer(Socket socket)
+        public OperationPerformer(Socket socket, CommandSender.OnLogGenerated onSend = null, CommandSender.OnLogGenerated onReceive = null)
         {
-            _commandSender = new CommandSender(socket);
+            _commandSender = new CommandSender(socket, onSend, onReceive);
         }
 
         public bool ActiveMode { set; get; } = false;

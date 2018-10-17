@@ -54,7 +54,7 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" Height="25" Margin="2,2,2,2" />
+                <TextBox Grid.Column="0" Name="LocalTextPathTextBox" Height="25" Margin="2,2,2,2" VerticalContentAlignment="Center"/>
                 <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="LocalGo"
                         Click="LocalGo_OnClick" />
             </Grid>
@@ -106,14 +106,15 @@
                     <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Name="RemotePathTextBox" Height="25" Margin="2,2,2,2" />
+                <TextBox Grid.Column="0" Name="RemotePathTextBox" Height="25" Margin="2,2,2,2" HorizontalContentAlignment="Center"/>
                 <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Content="Go" Name="RemoteGo"
                         Click="RemoteGo_OnClick" />
             </Grid>
         </Grid>
 
         <!--local file list-->
-        <ListView Grid.Row="1" Grid.Column="0" Name="LocalFileList" Margin="2,2,2,2" HorizontalContentAlignment="Stretch"/>
+        <ListView Grid.Row="1" Grid.Column="0" Name="LocalFileList" Margin="2,2,2,2"
+                  HorizontalContentAlignment="Stretch" />
 
         <!--transport commands-->
         <Grid Grid.Row="1" Grid.Column="1">
@@ -139,19 +140,21 @@
         </Grid>
 
         <!--remote file list-->
-        <ListView Grid.Row="1" Grid.Column="2" Name="RemoteFileList" Margin="2,2,2,2" HorizontalContentAlignment="Stretch"/>
+        <ListView Grid.Row="1" Grid.Column="2" Name="RemoteFileList" Margin="2,2,2,2"
+                  HorizontalContentAlignment="Stretch" />
 
         <!--tasks and log-->
         <TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="2,2,2,2">
             <TabItem Header="Tasks">
                 <ListView Name="TasksListView" HorizontalContentAlignment="Stretch">
-                    <TextBlock>hhh</TextBlock>
-                    <TextBlock>hhh</TextBlock>
                 </ListView>
             </TabItem>
             <TabItem Header="Log">
-                <TextBox IsReadOnly="True" FontFamily="Consolas">
-                </TextBox>
+                <ScrollViewer Name="LogScrollViewer" ScrollChanged="ScrollViewer_OnScrollChanged">
+                    <RichTextBox IsReadOnly="True" FontFamily="Consolas">
+                        <FlowDocument Name="LogFlow" />
+                    </RichTextBox>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </Grid>

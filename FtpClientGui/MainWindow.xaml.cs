@@ -10,6 +10,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
 using FtpClientBase;
 
 #endregion
@@ -23,7 +25,7 @@ namespace FtpClientGui
     public partial class MainWindow : Window
     {
         private const string LocalRootPath = "<root>";
-
+        private List<(string FileName, bool IsPending)> _tasks = new List<(string FileName, bool IsPending)>();
         private Connection _connection;
 
         /// <summary>
@@ -42,7 +44,19 @@ namespace FtpClientGui
         {
             try
             {
-                _connection = new Connection(host, port);
+                _connection = new Connection(
+                    host, port,
+                    ss => LogFlow.Blocks.Add(new Paragraph(new Run(ss))
+                    {
+                        Margin = new Thickness(0),
+                        Foreground = new SolidColorBrush(Colors.DarkRed)
+                    }),
+                    sr => LogFlow.Blocks.Add(new Paragraph(new Run(sr))
+                    {
+                        Margin = new Thickness(0),
+                        Foreground = new SolidColorBrush(Colors.DarkBlue)
+                    })
+                );
                 _connection.Establish(username, password);
 
                 if (ToggleActiveButton.IsChecked ?? false) _connection.Performer.ActiveMode = true;
@@ -144,6 +158,19 @@ namespace FtpClientGui
                 }
         }
 
+        private void RefreshTaskList()
+        {
+            TasksListView.Items.Clear();
+            foreach (var (fileName, isPending) in _tasks)
+            {
+                TasksListView.Items.Add(new TextBlock
+                {
+                    Text = (isPending ? "[Pending]" : "[Done]") + " " + fileName,
+                    Foreground = new SolidColorBrush(isPending ? Colors.DarkRed : Colors.DarkGreen)
+                });
+            }
+        }
+
         private void LocalRefresh_OnClick(object sender, RoutedEventArgs e)
         {
             RefreshLocalView();
@@ -200,6 +227,9 @@ namespace FtpClientGui
                 RemoteConnectDisconnect.Content = "Connect";
                 RemotePathTextBox.Text = "";
                 RemoteFileList.Items.Clear();
+
+                LogFlow.Blocks.Clear();
+                _tasks.Clear();
             }
         }
 
@@ -343,6 +373,12 @@ namespace FtpClientGui
                 return;
             }
 
+            foreach (var selecetedItem in LocalFileList.SelectedItems)
+            {
+                var fileName = ((TextBlock) selecetedItem).Text;
+                AddNewTask(fileName);
+            }
+
             var remotePath = _connection.Performer.GetCurrentDirectory();
             foreach (var selecetedItem in LocalFileList.SelectedItems)
             {
@@ -351,6 +387,7 @@ namespace FtpClientGui
                     var fileName = ((TextBlock) selecetedItem).Text;
                     var filePath = Path.Combine(_localCurrentPath, fileName);
                     _connection.Performer.UploadFile(remotePath + '/' + fileName, filePath);
+                    RemoveTask(fileName);
                 }
                 catch (Exception ex)
                 {
@@ -374,6 +411,12 @@ namespace FtpClientGui
                 return;
             }
 
+            foreach (var selecetedItem in RemoteFileList.SelectedItems)
+            {
+                var fileName = ((TextBlock) selecetedItem).Text;
+                AddNewTask(fileName);
+            }
+
             var remotePath = _connection.Performer.GetCurrentDirectory();
             foreach (var selecetedItem in RemoteFileList.SelectedItems)
             {
@@ -382,6 +425,7 @@ namespace FtpClientGui
                     var fileName = ((TextBlock) selecetedItem).Text;
                     var filePath = remotePath + '/' + fileName;
                     _connection.Performer.DownloadFile(filePath, Path.Combine(_localCurrentPath, fileName));
+                    RemoveTask(fileName);
                 }
                 catch (Exception ex)
                 {
@@ -390,6 +434,31 @@ namespace FtpClientGui
             }
 
             RefreshLocalView();
+        }
+
+        private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.ExtentHeightChange > 0)
+                LogScrollViewer.ScrollToBottom();
+        }
+
+        private void AddNewTask(string name)
+        {
+            _tasks.Add((name, true));
+            RefreshTaskList();
+        }
+
+        private void RemoveTask(string name)
+        {
+            for (var i = 0; i < _tasks.Count; i++)
+            {
+                if (_tasks[i].FileName != name || !_tasks[i].IsPending) continue;
+                _tasks[i] = (_tasks[i].FileName, false);
+                RefreshTaskList();
+                return;
+            }
+
+            RefreshTaskList();
         }
     }
 }

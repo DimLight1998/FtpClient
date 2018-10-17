@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -42,35 +44,46 @@ namespace FtpClientGui
 
         public void ConnectToServer(string host, int port, string username, string password)
         {
-            try
+            Task.Run(() =>
             {
-                _connection = new Connection(
-                    host, port,
-                    ss => LogFlow.Blocks.Add(new Paragraph(new Run(ss))
+                try
+                {
+                    _connection = new Connection(
+                        host, port,
+                        ss => Dispatcher.Invoke(() =>
+                        {
+                            LogFlow.Blocks.Add(new Paragraph(new Run(ss))
+                            {
+                                Margin = new Thickness(0),
+                                Foreground = new SolidColorBrush(Colors.DarkRed)
+                            });
+                        }),
+                        sr => Dispatcher.Invoke(() =>
+                        {
+                            LogFlow.Blocks.Add(new Paragraph(new Run(sr))
+                            {
+                                Margin = new Thickness(0),
+                                Foreground = new SolidColorBrush(Colors.DarkBlue)
+                            });
+                        }));
+                    _connection.Establish(username, password);
+
+                    Dispatcher.Invoke(() =>
                     {
-                        Margin = new Thickness(0),
-                        Foreground = new SolidColorBrush(Colors.DarkRed)
-                    }),
-                    sr => LogFlow.Blocks.Add(new Paragraph(new Run(sr))
-                    {
-                        Margin = new Thickness(0),
-                        Foreground = new SolidColorBrush(Colors.DarkBlue)
-                    })
-                );
-                _connection.Establish(username, password);
+                        if (ToggleActiveButton.IsChecked ?? false) _connection.Performer.ActiveMode = true;
+                        else _connection.Performer.ActiveMode = false;
+                    });
 
-                if (ToggleActiveButton.IsChecked ?? false) _connection.Performer.ActiveMode = true;
-                else _connection.Performer.ActiveMode = false;
+                    Dispatcher.Invoke(RefreshRemoteView);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    return;
+                }
 
-                RefreshRemoteView();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return;
-            }
-
-            RemoteConnectDisconnect.Content = "Disconnect";
+                Dispatcher.Invoke(() => { RemoteConnectDisconnect.Content = "Disconnect"; });
+            });
         }
 
         /// <summary>
@@ -86,8 +99,12 @@ namespace FtpClientGui
 
         private void ChangeRemotePath(string entryName)
         {
-            _connection.Performer.ChangeDirectory(entryName);
-            RefreshRemoteView();
+            Task.Run(() =>
+            {
+                _connection.Performer.ChangeDirectory(entryName);
+
+                Dispatcher.Invoke(RefreshRemoteView);
+            });
         }
 
         /// <summary>
@@ -137,25 +154,32 @@ namespace FtpClientGui
 
         private void RefreshRemoteView()
         {
-            var currentPath = _connection.Performer.GetCurrentDirectory();
-            var fileList = _connection.Performer.ListFiles(currentPath);
+            Task.Run(() =>
+            {
+                var currentPath = _connection.Performer.GetCurrentDirectory();
+                var fileList = _connection.Performer.ListFiles(currentPath);
 
-            RemotePathTextBox.Text = currentPath;
-            RemoteFileList.Items.Clear();
-            foreach (var file in fileList)
-                if (file.IsDir)
+                Dispatcher.Invoke(() =>
                 {
-                    var textBlock = new TextBlock {FontWeight = FontWeights.Bold, Text = file.Name};
-                    textBlock.MouseLeftButtonDown += (sender, args) =>
-                    {
-                        if (args.ClickCount == 2) ChangeRemotePath(file.Name);
-                    };
-                    RemoteFileList.Items.Add(textBlock);
-                }
-                else
-                {
-                    RemoteFileList.Items.Add(new TextBlock {Text = file.Name});
-                }
+                    RemotePathTextBox.Text = currentPath;
+                    RemoteFileList.Items.Clear();
+
+                    foreach (var file in fileList)
+                        if (file.IsDir)
+                        {
+                            var textBlock = new TextBlock {FontWeight = FontWeights.Bold, Text = file.Name};
+                            textBlock.MouseLeftButtonDown += (sender, args) =>
+                            {
+                                if (args.ClickCount == 2) ChangeRemotePath(file.Name);
+                            };
+                            RemoteFileList.Items.Add(textBlock);
+                        }
+                        else
+                        {
+                            RemoteFileList.Items.Add(new TextBlock {Text = file.Name});
+                        }
+                });
+            });
         }
 
         private void RefreshTaskList()
@@ -223,13 +247,21 @@ namespace FtpClientGui
             }
             else
             {
-                _connection.Destory();
-                RemoteConnectDisconnect.Content = "Connect";
-                RemotePathTextBox.Text = "";
-                RemoteFileList.Items.Clear();
+                Task.Run(() =>
+                {
+                    _connection.Destory();
 
-                LogFlow.Blocks.Clear();
-                _tasks.Clear();
+                    Dispatcher.Invoke(() =>
+                    {
+                        RemoteConnectDisconnect.Content = "Connect";
+                        RemotePathTextBox.Text = "";
+                        RemoteFileList.Items.Clear();
+
+                        LogFlow.Blocks.Clear();
+                        _tasks.Clear();
+                        TasksListView.Items.Clear();
+                    });
+                });
             }
         }
 
@@ -260,16 +292,20 @@ namespace FtpClientGui
             var inputWindow = new SingleInput("Name of the new folder?");
             inputWindow.ShowDialog();
             var inputText = inputWindow.InputText;
-            try
-            {
-                _connection.Performer.MakeDirectory(inputText);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
 
-            RefreshRemoteView();
+            Task.Run(() =>
+            {
+                try
+                {
+                    _connection.Performer.MakeDirectory(inputText);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                }
+
+                Dispatcher.Invoke(RefreshRemoteView);
+            });
         }
 
         private void RemoteRemoveFolder_OnClick(object sender, RoutedEventArgs e)
@@ -280,21 +316,28 @@ namespace FtpClientGui
                 return;
             }
 
-            var selectedFiles = RemoteFileList.SelectedItems;
-            foreach (var selectedFile in selectedFiles)
+            var selectedTexts = new List<string>();
+            foreach (var selectedFile in RemoteFileList.SelectedItems)
             {
-                var text = ((TextBlock) selectedFile).Text;
-                try
-                {
-                    _connection.Performer.RemoveDirectory(text);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                selectedTexts.Add(((TextBlock) selectedFile).Text);
             }
 
-            RefreshRemoteView();
+            Task.Run(() =>
+            {
+                foreach (var text in selectedTexts)
+                {
+                    try
+                    {
+                        _connection.Performer.RemoveDirectory(text);
+                    }
+                    catch (Exception ex)
+                    {
+                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    }
+                }
+
+                Dispatcher.Invoke(RefreshRemoteView);
+            });
         }
 
         private void RemoteRenameFile_OnClick(object sender, RoutedEventArgs e)
@@ -315,16 +358,22 @@ namespace FtpClientGui
                 var inputWindow = new SingleInput("New name of the folder?");
                 inputWindow.ShowDialog();
                 var inputText = inputWindow.InputText;
-                try
-                {
-                    _connection.Performer.RenameFile(((TextBlock) selectedFiles[0]).Text, inputText);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
 
-                RefreshRemoteView();
+                var oldName = ((TextBlock) selectedFiles[0]).Text;
+
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        _connection.Performer.RenameFile(oldName, inputText);
+                    }
+                    catch (Exception ex)
+                    {
+                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    }
+
+                    Dispatcher.Invoke(RefreshRemoteView);
+                });
             }
         }
 
@@ -379,23 +428,35 @@ namespace FtpClientGui
                 AddNewTask(fileName);
             }
 
-            var remotePath = _connection.Performer.GetCurrentDirectory();
+            var fileNames = new List<string>();
+            var filePaths = new List<string>();
             foreach (var selecetedItem in LocalFileList.SelectedItems)
             {
-                try
-                {
-                    var fileName = ((TextBlock) selecetedItem).Text;
-                    var filePath = Path.Combine(_localCurrentPath, fileName);
-                    _connection.Performer.UploadFile(remotePath + '/' + fileName, filePath);
-                    RemoveTask(fileName);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                var fileName = ((TextBlock) selecetedItem).Text;
+                fileNames.Add(fileName);
+                filePaths.Add(Path.Combine(_localCurrentPath, fileName));
             }
 
-            RefreshRemoteView();
+            Task.Run(() =>
+            {
+                var remotePath = _connection.Performer.GetCurrentDirectory();
+                for (var i = 0; i < fileNames.Count; i++)
+                {
+                    var fileName = fileNames[i];
+                    var filePath = filePaths[i];
+                    try
+                    {
+                        _connection.Performer.UploadFile(remotePath + '/' + fileName, filePath);
+                        Dispatcher.Invoke(() => { RemoveTask(fileName); });
+                    }
+                    catch (Exception ex)
+                    {
+                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    }
+                }
+
+                Dispatcher.Invoke(RefreshRemoteView);
+            });
         }
 
         private void ConfirmDownload_OnClick(object sender, RoutedEventArgs e)
@@ -418,22 +479,32 @@ namespace FtpClientGui
             }
 
             var remotePath = _connection.Performer.GetCurrentDirectory();
+
+            var fileNames = new List<string>();
             foreach (var selecetedItem in RemoteFileList.SelectedItems)
             {
-                try
-                {
-                    var fileName = ((TextBlock) selecetedItem).Text;
-                    var filePath = remotePath + '/' + fileName;
-                    _connection.Performer.DownloadFile(filePath, Path.Combine(_localCurrentPath, fileName));
-                    RemoveTask(fileName);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                var fileName = ((TextBlock) selecetedItem).Text;
+                fileNames.Add(fileName);
             }
 
-            RefreshLocalView();
+            Task.Run(() =>
+            {
+                foreach (var fileName in fileNames)
+                {
+                    try
+                    {
+                        var filePath = remotePath + '/' + fileName;
+                        _connection.Performer.DownloadFile(filePath, Path.Combine(_localCurrentPath, fileName));
+                        Dispatcher.Invoke(() => { RemoveTask(fileName); });
+                    }
+                    catch (Exception ex)
+                    {
+                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    }
+                }
+
+                Dispatcher.Invoke(RefreshLocalView);
+            });
         }
 
         private void ScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)

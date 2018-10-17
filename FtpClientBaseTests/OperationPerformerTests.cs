@@ -1,4 +1,5 @@
-﻿#region
+﻿using FtpClientBase;
+#region
 
 using System;
 using System.Net.Sockets;
@@ -252,6 +253,22 @@ namespace FtpClientBase.Tests
             Assert.IsTrue(operationPerformer.ListFiles().FindIndex(x => x.Name == "testDir") == -1);
 
             operationPerformer.LogOut();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod()]
+        public void RenameFileTest()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(Host, Port);
+            var operationPerformer = new OperationPerformer(socket);
+            operationPerformer.OmitWelcomeResponse();
+            operationPerformer.LogIn(Username, Password);
+
+            operationPerformer.DownloadFile("FTP.txt", "haha.txt");
+            operationPerformer.UploadFile("haha.txt", "haha.txt");
+            operationPerformer.RenameFile("haha.txt", "hehe.txt");
+
             Assert.IsTrue(true);
         }
     }

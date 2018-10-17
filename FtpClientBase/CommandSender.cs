@@ -143,5 +143,15 @@ namespace FtpClientBase
         {
             return SendAndGetResponse($"RMD {pathname}\r\n");
         }
+
+        public (int Code, string Response) Rnfr(string oldname)
+        {
+            return SendAndGetResponse($"RNFR {oldname}\r\n");
+        }
+
+        public (int Code, string Response) Rnto(string newname)
+        {
+            return SendAndGetResponse($"RNTO {newname}\r\n");
+        }
     }
 }

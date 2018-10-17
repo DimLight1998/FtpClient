@@ -274,6 +274,14 @@ namespace FtpClientBase
             return ret;
         }
 
+        public void RenameFile(string oldName, string newName)
+        {
+            var (code, response) = _commandSender.Rnfr(oldName);
+            if (code != 350) throw new Exception(response);
+            (code, response) = _commandSender.Rnto(newName);
+            if (code != 250) throw new Exception(response);
+        }
+
         /// <summary>This method will send a passive command to the server, and create a tcp socket connect to it</summary>
         /// <returns>The socket connected. You can receive and send data through this socket.</returns>
         private Socket PreparePassiveMode()

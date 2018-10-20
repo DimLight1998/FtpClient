@@ -96,11 +96,16 @@ namespace FtpClientGui
 
         private void ChangeRemotePath(string entryName)
         {
+            DisableNetworkInputs();
             Task.Run(() =>
             {
                 _connection.Performer.ChangeDirectory(entryName);
 
-                Dispatcher.Invoke(RefreshRemoteView);
+                Dispatcher.Invoke(() =>
+                {
+                    RefreshRemoteView();
+                    EnableNetworkInputs();
+                });
             });
         }
 
@@ -151,6 +156,7 @@ namespace FtpClientGui
 
         private void RefreshRemoteView()
         {
+            DisableNetworkInputs();
             Task.Run(() =>
             {
                 var currentPath = _connection.Performer.GetCurrentDirectory();
@@ -175,6 +181,8 @@ namespace FtpClientGui
                         {
                             RemoteFileList.Items.Add(new TextBlock {Text = file.Name});
                         }
+
+                    EnableNetworkInputs();
                 });
             });
         }
@@ -279,6 +287,7 @@ namespace FtpClientGui
                 MessageBox.Show("Not connected");
                 return;
             }
+            DisableNetworkInputs();
 
             var inputWindow = new SingleInput("Name of the new folder?");
             inputWindow.ShowDialog();
@@ -292,10 +301,18 @@ namespace FtpClientGui
                 }
                 catch (Exception ex)
                 {
-                    Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                    Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(ex.Message); 
+                        EnableNetworkInputs();
+                    });
                 }
 
-                Dispatcher.Invoke(RefreshRemoteView);
+                Dispatcher.Invoke(() =>
+                {
+                    RefreshRemoteView();
+                    EnableNetworkInputs();
+                });
             });
         }
 
@@ -306,6 +323,7 @@ namespace FtpClientGui
                 MessageBox.Show("Not connected");
                 return;
             }
+            DisableNetworkInputs();
 
             var selectedTexts = new List<string>();
             foreach (var selectedFile in RemoteFileList.SelectedItems)
@@ -320,10 +338,18 @@ namespace FtpClientGui
                     }
                     catch (Exception ex)
                     {
-                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                        Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(ex.Message); 
+                            EnableNetworkInputs();
+                        });
                     }
 
-                Dispatcher.Invoke(RefreshRemoteView);
+                Dispatcher.Invoke(() =>
+                {
+                    RefreshRemoteView();
+                    EnableNetworkInputs();
+                });
             });
         }
 
@@ -342,6 +368,7 @@ namespace FtpClientGui
             }
             else
             {
+                DisableNetworkInputs();
                 var inputWindow = new SingleInput("New name of the folder?");
                 inputWindow.ShowDialog();
                 var inputText = inputWindow.InputText;
@@ -356,10 +383,18 @@ namespace FtpClientGui
                     }
                     catch (Exception ex)
                     {
-                        Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
+                        Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(ex.Message); 
+                            EnableNetworkInputs();
+                        });
                     }
 
-                    Dispatcher.Invoke(RefreshRemoteView);
+                    Dispatcher.Invoke(() =>
+                    {
+                        RefreshRemoteView();
+                        EnableNetworkInputs();
+                    });
                 });
             }
         }
@@ -372,6 +407,7 @@ namespace FtpClientGui
                 return;
             }
 
+            DisableNetworkInputs();
             var targetPath = RemotePathTextBox.Text;
             var currentPath = _connection.Performer.GetCurrentDirectory();
             ChangeRemotePath("/");
@@ -384,6 +420,7 @@ namespace FtpClientGui
                 MessageBox.Show(ex.Message);
                 ChangeRemotePath(currentPath);
             }
+            EnableNetworkInputs();
         }
 
         private void ToggleActiveButton_OnChecked(object sender, RoutedEventArgs e)
@@ -409,6 +446,7 @@ namespace FtpClientGui
                 return;
             }
 
+            DisableNetworkInputs();
             foreach (var selecetedItem in LocalFileList.SelectedItems)
             {
                 var fileName = ((TextBlock) selecetedItem).Text;
@@ -442,7 +480,11 @@ namespace FtpClientGui
                     }
                 }
 
-                Dispatcher.Invoke(RefreshRemoteView);
+                Dispatcher.Invoke(() =>
+                {
+                    RefreshRemoteView();
+                    EnableNetworkInputs();
+                });
             });
         }
 
@@ -459,6 +501,7 @@ namespace FtpClientGui
                 return;
             }
 
+            DisableNetworkInputs();
             foreach (var selecetedItem in RemoteFileList.SelectedItems)
             {
                 var fileName = ((TextBlock) selecetedItem).Text;
@@ -488,7 +531,11 @@ namespace FtpClientGui
                         Dispatcher.Invoke(() => { MessageBox.Show(ex.Message); });
                     }
 
-                Dispatcher.Invoke(RefreshLocalView);
+                Dispatcher.Invoke(() =>
+                {
+                    RefreshLocalView();
+                    EnableNetworkInputs();
+                });
             });
         }
 
@@ -515,6 +562,32 @@ namespace FtpClientGui
             }
 
             RefreshTaskList();
+        }
+
+        private void DisableNetworkInputs()
+        {
+            RemoteConnectDisconnect.IsEnabled = false;
+            RemoteGoUp.IsEnabled = false;
+            RemoteRefresh.IsEnabled = false;
+            RemoteNewFolder.IsEnabled = false;
+            RemoteRemoveFolder.IsEnabled = false;
+            RemoteRenameFile.IsEnabled = false;
+            ConfirmUpload.IsEnabled = false;
+            ConfirmDownload.IsEnabled = false;
+            RemoteGo.IsEnabled = false;
+        }
+
+        private void EnableNetworkInputs()
+        {
+            RemoteConnectDisconnect.IsEnabled = true;
+            RemoteGoUp.IsEnabled = true;
+            RemoteRefresh.IsEnabled = true;
+            RemoteNewFolder.IsEnabled = true;
+            RemoteRemoveFolder.IsEnabled = true;
+            RemoteRenameFile.IsEnabled = true;
+            ConfirmUpload.IsEnabled = true;
+            ConfirmDownload.IsEnabled = true;
+            RemoteGo.IsEnabled = true;
         }
     }
 }
